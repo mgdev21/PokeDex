@@ -7,21 +7,22 @@ function Pokedex() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const limit = 20;
-  const [nextPageData, setNextPageData] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
   const [pageInput, setPageInput] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Read the `page` query parameter from the URL
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const pageFromQuery = parseInt(queryParams.get("page"), 10);
+
     if (pageFromQuery && pageFromQuery > 0) {
       setPage(pageFromQuery);
+    } else {
+      setPage(1);
     }
   }, [location.search]);
 
-  // Fetch Pokémon data whenever the `page` state changes
   useEffect(() => {
     setLoading(true);
 
@@ -31,7 +32,12 @@ function Pokedex() {
       .then((response) => response.json())
       .then((data) => {
         setPokemonList(data.results);
-        setNextPageData(data);
+        setTotalPages(Math.ceil(data.count / limit));
+
+        if (page > Math.ceil(data.count / limit)) {
+          setPage(Math.ceil(data.count / limit));
+        }
+
         setLoading(false);
       })
       .catch((error) => {
@@ -39,12 +45,16 @@ function Pokedex() {
         setLoading(false);
       });
 
-    // Update the URL with the current page
-    navigate(`?page=${page}`, { replace: true });
+
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("page", page);
+    navigate(`?${queryParams.toString()}`, { replace: true });
   }, [page, navigate]);
 
   const goToNextPage = () => {
-    setPage((prev) => prev + 1);
+    if (page < totalPages) {
+      setPage((prev) => prev + 1);
+    }
   };
 
   const goToPreviousPage = () => {
@@ -56,7 +66,6 @@ function Pokedex() {
   };
 
   const handleGoToPage = () => {
-    const totalPages = Math.ceil(nextPageData?.count / limit);
     const pageNumber = parseInt(pageInput, 10);
 
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -68,6 +77,22 @@ function Pokedex() {
 
   return (
     <div>
+      <nav className="navbar">
+        <div className="navbar-links">
+          <Link to="/pokedex">Home</Link>
+          <Link to="/about">About</Link>
+        </div>
+        <div className="navbar-search">
+          <input
+            type="number"
+            value={pageInput}
+            onChange={handlePageInputChange}
+            placeholder="Enter page number"
+          />
+          <button onClick={handleGoToPage}>Search</button>
+        </div>
+      </nav>
+
       <h1>Pokédex</h1>
 
       {loading && pokemonList.length === 0 ? (
@@ -80,7 +105,7 @@ function Pokedex() {
 
             return (
               <div key={index} className="pokemon-card">
-                <Link to={`/pokemon/${pokemon.name}`}>
+                <Link to={`/pokemon/${pokemon.name}?page=${page}`}>
                   <img src={imageUrl} alt={pokemon.name} />
                   <p>{pokemon.name.toUpperCase()}</p>
                 </Link>
@@ -94,18 +119,10 @@ function Pokedex() {
         <button onClick={goToPreviousPage} disabled={page === 1}>
           Previous
         </button>
-        <span> Page {page} </span>
-        <button onClick={goToNextPage}>Next</button>
-      </div>
-
-      <div>
-        <input
-          type="number"
-          value={pageInput}
-          onChange={handlePageInputChange}
-          placeholder="Enter page number"
-        />
-        <button onClick={handleGoToPage}>Go</button>
+        <span> Page {page} of {totalPages} </span>
+        <button onClick={goToNextPage} disabled={page === totalPages}>
+          Next
+        </button>
       </div>
     </div>
   );

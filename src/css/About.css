@@ -1,0 +1,44 @@
+.about-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #f5f5f5; /* Light gray background */
+    color: #333333; /* Dark gray text */
+  }
+  
+  .about-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .about-container p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .about-container span {
+    font-weight: bold;
+  }
+  
+  .about-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .about-buttons button {
+    background-color: #ff0000; /* Pokémon Red */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .about-buttons button:hover {
+    background-color: #cc0000; /* Darker red */
+  }
