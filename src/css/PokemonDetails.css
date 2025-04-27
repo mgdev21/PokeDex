@@ -2,16 +2,17 @@
   display: flex;
   gap: 20px;
   margin-top: 20px;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #FFFFFF;
-  width: 100%;
-  max-width: 1500px;
+  width: 90%;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 .pokemon-data,
 .pokemon-evolution {
@@ -52,8 +53,8 @@
 }
 
 .pokemon-section {
-  margin-bottom: 20px;
-  padding: 15px;
+  margin-bottom: 10px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #F5F5F5; 

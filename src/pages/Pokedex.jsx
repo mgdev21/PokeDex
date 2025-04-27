@@ -6,9 +6,9 @@ function Pokedex() {
   const [pokemonList, setPokemonList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const limit = 20;
-  const [totalPages, setTotalPages] = useState(0);
   const [pageInput, setPageInput] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
+  const limit = window.innerWidth < 768 ? 10 : 15;
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +25,6 @@ function Pokedex() {
 
   useEffect(() => {
     setLoading(true);
-
     const offset = (page - 1) * limit;
 
     fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
@@ -44,7 +43,6 @@ function Pokedex() {
         console.error("Error fetching Pokémon:", error);
         setLoading(false);
       });
-
 
     const queryParams = new URLSearchParams(location.search);
     queryParams.set("page", page);
@@ -76,10 +74,10 @@ function Pokedex() {
   };
 
   return (
-    <div>
+    <>
       <nav className="navbar">
         <div className="navbar-links">
-          <Link to="/pokedex">Home</Link>
+          <Link to="/">Home</Link>
           <Link to="/about">About</Link>
         </div>
         <div className="navbar-search">
@@ -92,39 +90,43 @@ function Pokedex() {
           <button onClick={handleGoToPage}>Search</button>
         </div>
       </nav>
-
-      <h1>Pokédex</h1>
-
-      {loading && pokemonList.length === 0 ? (
-        <p>Loading Pokémon...</p>
-      ) : (
-        <div className="pokemon-grid">
-          {pokemonList.map((pokemon, index) => {
-            const pokemonId = pokemon.url.split("/").filter(Boolean).pop();
-            const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
-
-            return (
-              <div key={index} className="pokemon-card">
-                <Link to={`/pokemon/${pokemon.name}?page=${page}`}>
-                  <img src={imageUrl} alt={pokemon.name} />
-                  <p>{pokemon.name.toUpperCase()}</p>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <div>
-        <button onClick={goToPreviousPage} disabled={page === 1}>
-          Previous
-        </button>
-        <span> Page {page} of {totalPages} </span>
-        <button onClick={goToNextPage} disabled={page === totalPages}>
-          Next
-        </button>
+  
+      <div className="pokedex-container">
+        <h1>Pokédex</h1>
+  
+        {loading && pokemonList.length === 0 ? (
+          <p>Loading Pokémon...</p>
+        ) : (
+          <>
+            <div className="pokemon-grid">
+              {pokemonList.map((pokemon, index) => {
+                const pokemonId = pokemon.url.split("/").filter(Boolean).pop();
+                const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+  
+                return (
+                  <div key={index} className="pokemon-card">
+                    <Link to={`/pokemon/${pokemon.name}?page=${page}`}>
+                      <img src={imageUrl} alt={pokemon.name} />
+                      <p>{pokemon.name.toUpperCase()}</p>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+  
+            <div className="pagination">
+              <button onClick={goToPreviousPage} disabled={page === 1}>
+                Previous
+              </button>
+              <span>Page {page} of {totalPages}</span>
+              <button onClick={goToNextPage} disabled={page === totalPages}>
+                Next
+              </button>
+            </div>
+          </>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 

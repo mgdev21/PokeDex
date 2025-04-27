@@ -15,23 +15,22 @@ function PokemonDetails() {
 
     setLoading(true);
 
-    // Fetch Pokémon details
     fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`)
       .then((response) => response.json())
       .then((data) => {
         setPokemon(data);
 
-        // Fetch Pokémon species to get evolution chain URL
+
         return fetch(data.species.url);
       })
       .then((response) => response.json())
       .then((speciesData) => {
-        // Fetch evolution chain
+
         return fetch(speciesData.evolution_chain.url);
       })
       .then((response) => response.json())
       .then((evolutionData) => {
-        // Parse evolution chain
+
         const chain = [];
         let current = evolutionData.chain;
 
@@ -40,7 +39,7 @@ function PokemonDetails() {
             name: current.species.name,
             url: current.species.url,
           });
-          current = current.evolves_to[0]; // Move to the next evolution
+          current = current.evolves_to[0]; 
         }
 
         setEvolutionChain(chain);
@@ -66,7 +65,6 @@ function PokemonDetails() {
   return (
     <div className="pokemon-details">
       <div className="pokemon-details-container">
-        {/* Left Section: Pokémon Data */}
         <div className="pokemon-data">
           <div className="pokemon-header">
             <h1>{pokemon.name.toUpperCase()}</h1>
@@ -114,11 +112,7 @@ function PokemonDetails() {
             </div>
           </div>
         </div>
-
-        {/* Divider Line */}
         <div className="divider"></div>
-
-        {/* Right Section: Evolution Chain */}
         <div className="pokemon-evolution">
           <h3>Evolution Chain</h3>
           {evolutionChain.length > 0 ? (
